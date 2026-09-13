@@ -1,0 +1,24 @@
+{
+  "name": "connect",
+  "version": "1.0.0",
+  "description": "A project collabration and workspace management tool for organization.",
+  "homepage": "https://github.com/xtrimDev/connecT#readme",
+  "bugs": {
+    "url": "https://github.com/xtrimDev/connecT/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xtrimDev/connecT.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "setup": "npm install && npm run dev"
+  },
+  "dependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
