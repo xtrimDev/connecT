@@ -15,10 +15,14 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon src/app.js",
+    "dev": "tsx watch src/app.ts",
     "setup": "npm install && npm run dev"
   },
   "dependencies": {
     "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
   }
 }
