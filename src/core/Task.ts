@@ -1,16 +1,4 @@
-enum TaskStatus {
-    TODO = "TODO",
-    IN_PROGRESS = "IN_PROGRESS",
-    COMPLETED = "COMPLETED",
-    BLOCKED = "BLOCKED"
-}
-
-enum TaskPriority {
-    LOW = "LOW",
-    MEDIUM = "MEDIUM",
-    HIGH = "HIGH",
-    URGENT = "URGENT"
-}
+import { TaskStatus, TaskPriority } from './enums/TaskEnums';
 
 interface TaskComment {
     id: number;
@@ -22,7 +10,6 @@ interface TaskComment {
 
 class Task {
     static #count: number = 1000;
-    static #commentCount: number = 1000;
 
     #id: number;
     #teamId: number;
@@ -37,7 +24,6 @@ class Task {
     #createdBy: number;
     #createdAt: Date;
     #updatedAt: Date;
-    #comments: TaskComment[];
 
     constructor(
         teamId: number,
@@ -65,7 +51,6 @@ class Task {
         this.#createdBy = createdBy;
         this.#createdAt = new Date();
         this.#updatedAt = new Date();
-        this.#comments = [];
     }
 
     getId(): number {
@@ -167,125 +152,35 @@ class Task {
         return this.#status === TaskStatus.COMPLETED;
     }
 
-    isOverdue(): boolean {
-        if (!this.#dueDate || this.#status === TaskStatus.COMPLETED) {
-            return false;
-        }
-        return new Date() > this.#dueDate;
+    // Database integration methods - to be implemented with actual DB calls
+    addComment(_userId: number, _content: string): TaskComment | null {
+        // TODO: Insert into task_comments table
+        return null;
     }
 
-    getDaysUntilDue(): number | null {
-        if (!this.#dueDate) {
-            return null;
-        }
-        const now = new Date();
-        const diff = this.#dueDate.getTime() - now.getTime();
-        return Math.ceil(diff / (1000 * 60 * 60 * 24));
+    updateComment(_commentId: number, _content: string, _userId: number): boolean {
+        // TODO: Update task_comments table with authorization check
+        return false;
     }
 
-    isAssignedTo(userId: number): boolean {
-        return this.#assignedTo === userId;
-    }
-
-    isCreatedBy(userId: number): boolean {
-        return this.#createdBy === userId;
-    }
-
-    addComment(userId: number, content: string): TaskComment {
-        Task.#commentCount++;
-
-        const comment: TaskComment = {
-            id: Task.#commentCount,
-            userId,
-            content,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
-
-        this.#comments.push(comment);
-        return comment;
-    }
-
-    updateComment(commentId: number, content: string, userId: number): boolean {
-        const comment = this.#comments.find(c => c.id === commentId);
-        if (!comment) {
-            return false;
-        }
-
-        // Only the author can update their comment
-        if (comment.userId !== userId) {
-            throw new Error("You can only update your own comments");
-        }
-
-        comment.content = content;
-        comment.updatedAt = new Date();
-        return true;
-    }
-
-    deleteComment(commentId: number, userId: number): boolean {
-        const commentIndex = this.#comments.findIndex(c => c.id === commentId);
-        if (commentIndex === -1) {
-            return false;
-        }
-
-        // Only the author can delete their comment
-        if (this.#comments[commentIndex].userId !== userId) {
-            throw new Error("You can only delete your own comments");
-        }
-
-        this.#comments.splice(commentIndex, 1);
-        return true;
+    deleteComment(_commentId: number, _userId: number): boolean {
+        // TODO: Delete from task_comments table with authorization check
+        return false;
     }
 
     getComments(): TaskComment[] {
-        return [...this.#comments];
+        // TODO: Query from task_comments table
+        return [];
     }
 
     getCommentCount(): number {
-        return this.#comments.length;
+        // TODO: Count from task_comments table
+        return 0;
     }
 
-    getComment(commentId: number): TaskComment | null {
-        return this.#comments.find(c => c.id === commentId) || null;
-    }
-
-    complete(): void {
-        this.setStatus(TaskStatus.COMPLETED);
-    }
-
-    reopen(): void {
-        if (this.#status === TaskStatus.COMPLETED) {
-            this.setStatus(TaskStatus.TODO);
-        }
-    }
-
-    block(): void {
-        this.setStatus(TaskStatus.BLOCKED);
-    }
-
-    startProgress(): void {
-        if (this.#status === TaskStatus.TODO) {
-            this.setStatus(TaskStatus.IN_PROGRESS);
-        }
-    }
-
-    getPriorityLevel(): number {
-        switch (this.#priority) {
-            case TaskPriority.LOW:
-                return 1;
-            case TaskPriority.MEDIUM:
-                return 2;
-            case TaskPriority.HIGH:
-                return 3;
-            case TaskPriority.URGENT:
-                return 4;
-            default:
-                return 0;
-        }
-    }
-
-    comparePriority(other: Task): number {
-        return this.getPriorityLevel() - other.getPriorityLevel();
+    getComment(_commentId: number): TaskComment | null {
+        // TODO: Query single comment from task_comments table
+        return null;
     }
 }
 
