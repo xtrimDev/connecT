@@ -1,4 +1,4 @@
-import UserRole  from './UserRole';
+import UserRole from './UserRole';
 
 class User {
     static #count: number = 1000;
