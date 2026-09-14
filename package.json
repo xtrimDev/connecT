@@ -19,9 +19,12 @@
     "setup": "npm install && npm run dev"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
+    "mongoose": "^9.10.0",
     "nodemon": "^3.1.14"
   },
   "devDependencies": {
+    "@types/node": "^26.5.1",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   }
