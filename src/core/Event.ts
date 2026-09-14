@@ -1,17 +1,4 @@
-enum EventType {
-    MEETING = "MEETING",
-    DEADLINE = "DEADLINE",
-    MILESTONE = "MILESTONE",
-    PRESENTATION = "PRESENTATION",
-    OTHER = "OTHER"
-}
-
-enum ResponseStatus {
-    PENDING = "PENDING",
-    ACCEPTED = "ACCEPTED",
-    DECLINED = "DECLINED",
-    TENTATIVE = "TENTATIVE"
-}
+import { EventType, ResponseStatus } from './enums/EventEnums';
 
 class Event {
     static #count: number = 1000;
@@ -29,7 +16,6 @@ class Event {
     #createdBy: number;
     #createdAt: Date;
     #updatedAt: Date;
-    #participants: Map<number, ResponseStatus>;
 
     constructor(
         teamId: number,
@@ -58,7 +44,6 @@ class Event {
         this.#createdBy = createdBy;
         this.#createdAt = new Date();
         this.#updatedAt = new Date();
-        this.#participants = new Map();
     }
 
     getId(): number {
@@ -119,9 +104,6 @@ class Event {
     }
 
     setEndTime(endTime: Date | null): void {
-        if (endTime && this.#startTime && endTime <= this.#startTime) {
-            throw new Error("End time must be after start time");
-        }
         this.#endTime = endTime;
         this.#updatedAt = new Date();
     }
@@ -140,9 +122,6 @@ class Event {
     }
 
     setReminderMinutes(minutes: number | null): void {
-        if (minutes !== null && (minutes < 0 || minutes > 10080)) {
-            throw new Error("Reminder must be between 0 and 10080 minutes (1 week)");
-        }
         this.#reminderMinutes = minutes;
         this.#updatedAt = new Date();
     }
@@ -159,73 +138,32 @@ class Event {
         return this.#updatedAt;
     }
 
+    // Database integration methods - to be implemented with actual DB calls
     addParticipant(userId: number, status: ResponseStatus = ResponseStatus.PENDING): void {
-        this.#participants.set(userId, status);
+        // TODO: Insert into event_participants table
     }
 
     removeParticipant(userId: number): void {
-        this.#participants.delete(userId);
+        // TODO: Delete from event_participants table
     }
 
     updateParticipantResponse(userId: number, status: ResponseStatus): void {
-        if (!this.#participants.has(userId)) {
-            throw new Error("Participant not found");
-        }
-        this.#participants.set(userId, status);
+        // TODO: Update event_participants table
     }
 
     getParticipantResponse(userId: number): ResponseStatus | null {
-        return this.#participants.get(userId) || null;
-    }
-
-    getParticipants(): Map<number, ResponseStatus> {
-        return new Map(this.#participants);
+        // TODO: Query from event_participants table
+        return null;
     }
 
     getParticipantCount(): number {
-        return this.#participants.size;
+        // TODO: Count from event_participants table
+        return 0;
     }
 
     getAcceptedCount(): number {
-        let count = 0;
-        for (const status of this.#participants.values()) {
-            if (status === ResponseStatus.ACCEPTED) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    isPast(): boolean {
-        const now = new Date();
-        return this.#startTime < now;
-    }
-
-    isUpcoming(daysAhead: number = 7): boolean {
-        const now = new Date();
-        const futureDate = new Date();
-        futureDate.setDate(futureDate.getDate() + daysAhead);
-        return this.#startTime > now && this.#startTime <= futureDate;
-    }
-
-    getDuration(): number | null {
-        if (!this.#endTime) {
-            return null;
-        }
-        return this.#endTime.getTime() - this.#startTime.getTime();
-    }
-
-    conflictsWith(otherEvent: Event): boolean {
-        if (!this.#endTime || !otherEvent.getEndTime()) {
-            return false;
-        }
-
-        const thisStart = this.#startTime.getTime();
-        const thisEnd = this.#endTime.getTime();
-        const otherStart = otherEvent.getStartTime().getTime();
-        const otherEnd = otherEvent.getEndTime()!.getTime();
-
-        return (thisStart < otherEnd && thisEnd > otherStart);
+        // TODO: Count accepted from event_participants table
+        return 0;
     }
 }
 
