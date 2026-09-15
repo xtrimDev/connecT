@@ -2,4 +2,5 @@ FROM node:26-slim
 WORKDIR /app
 
 COPY . .
-CMD ["npm", "run", "setup"]
+
+CMD ["sh", "-c", "cd backend && npm run setup & cd frontend && npm run dev & wait"]

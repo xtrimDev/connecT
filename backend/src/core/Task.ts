@@ -1,4 +1,5 @@
-import { TaskStatus, TaskPriority } from './enums/TaskEnums';
+import TaskStatus from "./TaskStatus"
+import TaskPriority from "./TaskPriority"
 
 interface TaskComment {
     id: number;

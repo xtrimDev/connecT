@@ -1,4 +1,5 @@
-import { EventType, ResponseStatus } from './enums/EventEnums';
+import EventType from "./EventType";
+import ResponseStatus from "./EventResponseStatus";
 
 class Event {
     static #count: number = 1000;
