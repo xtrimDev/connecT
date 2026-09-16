@@ -1,21 +1,24 @@
 import Group from './Group';
 
 class Channel {
-    static #count: number = 1000;
-
-    #id: number;
+    #id: string | undefined;
     #name: string;
     #groups: Group[];
 
-    constructor(name: string) {
-        Channel.#count++;
+    constructor(name: string, groups: Group[] = []) {
+        if (!name || name.trim().length === 0) {
+            throw new Error("Channel name is required.");
+        }
 
-        this.#id = Channel.#count;
-        this.#name = name;
-        this.#groups = [];
+        this.#name = name.trim();
+        this.#groups = groups;
     }
 
-    getId(): number {
+    private setId(id: string): void {
+        this.#id = id;
+    }
+
+    getId(): string | undefined {
         return this.#id;
     }
 
@@ -24,11 +27,13 @@ class Channel {
     }
 
     getGroups(): Group[] {
-        return this.#groups;
+        return [...this.#groups];
     }
 
     addGroup(group: Group): void {
-        this.#groups.push(group);
+        if (group && !this.#groups.some((g) => g.getId() === group.getId())) {
+            this.#groups.push(group);
+        }
     }
 
     removeGroup(group: Group): void {
@@ -36,6 +41,21 @@ class Channel {
             (g) => g.getId() !== group.getId()
         );
     }
+
+    static fromDocument(doc: any): Channel {
+        const groups = Array.isArray(doc.groups)
+            ? doc.groups.map((g: any) => typeof g === "object" && g.name ? Group.fromDocument(g) : g)
+            : [];
+
+        const channel = new Channel(doc.name, groups);
+
+        if (doc._id) {
+            channel.setId(doc._id.toString());
+        }
+
+        return channel;
+    }
 }
 
 export default Channel;
+

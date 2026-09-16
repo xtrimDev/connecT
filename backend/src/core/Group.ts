@@ -2,23 +2,26 @@ import User from './User';
 import Message from './Message';
 
 class Group {
-    static #count: number = 1000;
-
-    #id: number;
+    #id: string | undefined;
     #name: string;
     #users: User[];
     #messages: Message[];
 
-    constructor(name: string) {
-        Group.#count++;
+    constructor(name: string, users: User[] = [], messages: Message[] = []) {
+        if (!name || name.trim().length === 0) {
+            throw new Error("Group name is required.");
+        }
 
-        this.#id = Group.#count;
-        this.#name = name;
-        this.#users = [];
-        this.#messages = [];
+        this.#name = name.trim();
+        this.#users = users;
+        this.#messages = messages;
     }
 
-    getId(): number {
+    private setId(id: string): void {
+        this.#id = id;
+    }
+
+    getId(): string | undefined {
         return this.#id;
     }
 
@@ -27,15 +30,17 @@ class Group {
     }
 
     getUsers(): User[] {
-        return this.#users;
+        return [...this.#users];
     }
 
     getMessages(): Message[] {
-        return this.#messages;
+        return [...this.#messages];
     }
 
     addUser(user: User): void {
-        this.#users.push(user);
+        if (user && !this.#users.some((u) => u.getId() === user.getId())) {
+            this.#users.push(user);
+        }
     }
 
     removeUser(user: User): void {
@@ -45,7 +50,9 @@ class Group {
     }
 
     addMessage(message: Message): void {
-        this.#messages.push(message);
+        if (message) {
+            this.#messages.push(message);
+        }
     }
 
     removeMessage(message: Message): void {
@@ -53,6 +60,24 @@ class Group {
             (m) => m.getId() !== message.getId()
         );
     }
+
+    static fromDocument(doc: any): Group {
+        const users = Array.isArray(doc.users)
+            ? doc.users.map((u: any) => typeof u === "object" && u.name ? User.fromDocument(u) : u)
+            : [];
+        const messages = Array.isArray(doc.messages)
+            ? doc.messages.map((m: any) => typeof m === "object" && m.content ? Message.fromDocument(m) : m)
+            : [];
+
+        const group = new Group(doc.name, users, messages);
+
+        if (doc._id) {
+            group.setId(doc._id.toString());
+        }
+
+        return group;
+    }
 }
 
 export default Group;
+
