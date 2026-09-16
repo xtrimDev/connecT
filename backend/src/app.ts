@@ -1,15 +1,9 @@
-// import User from "./core/User"
-// import Organization from "./core/Organization";
-// import UserRole from "./core/UserRole"
+import Database from "./config/Database"
+import User from "./core/User"
+import UserRole from "./core/UserRole"
+import UserService from "./core/UserService"
 
-// const u1: User = new User("sameer", "bhandarisameer512@gmail.com", UserRole.BASIC)
+Database.connect()
 
-// const o1: Organization = new Organization("TCS");
-// o1.addEmployee(u1);
-
-// console.log(u1.getEmail())
-// console.log(o1.countEmployee());
-// console.log(o1.removeEmployee(u1));
-// console.log(o1.countEmployee());
-
-console.log("This is docker")
+const u1 = new User("Sameer Singh Bhandari", "bhandarisameer512@gmail.com", "Password", UserRole.BASIC)
+UserService.addUser(u1)
