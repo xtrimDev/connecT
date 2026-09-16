@@ -5,5 +5,5 @@ import UserService from "./core/UserService"
 
 Database.connect()
 
-const u1 = new User("Sameer Singh Bhandari", "bhandarisameer512@gmail.com", "Password", UserRole.BASIC)
+const u1 = new User("Sameer Singh Bhandari", "bhandarisameer512@gmail.com", "Password", UserRole.BASIC, false, ["TypeScript", "Node.js", "React"])
 UserService.addUser(u1)

@@ -26,6 +26,11 @@ const userSchema = new Schema(
             type: String,
             enum: Object.values(UserRole),
             required: true
+        },
+
+        skills: {
+            type: [String],
+            default: []
         }
     },
     {

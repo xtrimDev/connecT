@@ -8,13 +8,15 @@ class User {
     #email: string;
     #password: string;
     #role: UserRole;
+    #skills: string[];
 
     constructor(
         name: string,
         email: string,
         password: string,
         role: UserRole,
-        isHashedPassword: boolean = false
+        isHashedPassword: boolean = false,
+        skills: string[] = []
     ) {
         if (!name || name.trim().length === 0) {
             throw new Error("User name is required.");
@@ -36,6 +38,7 @@ class User {
             : bcrypt.hashSync(password, 12);
 
         this.#role = role;
+        this.#skills = skills.map((s) => s.trim()).filter((s) => s.length > 0);
     }
 
     private setId(id: string): void {
@@ -62,6 +65,26 @@ class User {
         return this.#password;
     }
 
+    getSkills(): string[] {
+        return [...this.#skills];
+    }
+
+    setSkills(skills: string[]): void {
+        this.#skills = skills.map((s) => s.trim()).filter((s) => s.length > 0);
+    }
+
+    addSkill(skill: string): void {
+        const trimmed = skill.trim();
+        if (trimmed.length > 0 && !this.#skills.includes(trimmed)) {
+            this.#skills.push(trimmed);
+        }
+    }
+
+    removeSkill(skill: string): void {
+        const trimmed = skill.trim();
+        this.#skills = this.#skills.filter((s) => s !== trimmed);
+    }
+
     async matchPassword(password: string): Promise<boolean> {
         return await bcrypt.compare(password, this.#password);
     }
@@ -72,7 +95,8 @@ class User {
             userDocument.email,
             userDocument.password,
             userDocument.role,
-            true
+            true,
+            userDocument.skills || []
         );
 
         user.setId(userDocument._id.toString());

@@ -10,7 +10,8 @@ class UserService {
                 name: user.getName(),
                 email: user.getEmail(),
                 password: user.getPassword(),
-                role: user.getRole()
+                role: user.getRole(),
+                skills: user.getSkills()
             });
         } catch (e) {
             console.log("Error: ", e);
@@ -49,7 +50,8 @@ class UserService {
                     name: user.getName(),
                     email: user.getEmail(),
                     password: user.getPassword(),
-                    role: user.getRole()
+                    role: user.getRole(),
+                    skills: user.getSkills()
                 },
                 {
                     new: true,
