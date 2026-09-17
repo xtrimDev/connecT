@@ -1,33 +1,86 @@
 import User from "./User";
 import Workspace from "./Workspace"
 
-class Organization extends Workspace {
-    static #count: number = 1000;
+class Organization {
+    #id : string | undefined;
 
-    #id : number;
-    #name : string;
-
-    #users: User[] = [];
+    #name : string = "";
+    #description : string = "";
+    #website : string = "";
+    #ownerId : string | undefined;
     
-    constructor(name : string) {
-        super();
-        
-        Organization.#count++;
+    constructor(name : string, description: string, website: string, owner: User) {
+        this.setName(name);
+        this.setDescription(description);
+        this.setWebsite(website);
 
-        this.#id = Organization.#count;
+        if (owner.getId() == undefined) {
+            throw new Error("Owner Id not found.");
+        }
+
+        this.#ownerId = owner.getId(); 
+
+    }
+
+    private setId(id : string) {
+        this.#id = id;
+    }
+
+    getId() : string | undefined {
+        return this.#id;
+    }
+
+    getOwnerId() : string | undefined {
+        return this.#ownerId;
+    }
+
+    private setName(name : string): void {
+        if (name.trim() == "") {
+            throw new Error("Name is required.");
+        }
+
         this.#name = name;
     }
 
-    countEmployee() : number {
-        return this.#users.length;
+    getName() : string {
+        return this.#name;
     }
 
-    addEmployee(user: User) {
-        this.#users.push(user);
+    setDescription(description : string): void {
+        if (description.trim() == "") {
+            throw new Error("Description is required.");
+        }
+
+        this.#description = description;
     }
 
-    removeEmployee(user: User) {
-        this.#users = this.#users.filter(u => u !== user);
+    getDescription(): string {
+        return this.#description;
+    }
+
+    setWebsite(website : string): void {
+        if (website.trim() == "") {
+            throw new Error("Website is required.");
+        }
+
+        this.#website = website;
+    }
+
+    getWebsite():string {
+        return this.#website;
+    }
+
+    static fromDocument(organizationDocument: any): Organization {
+        const organization = new Organization(
+            organizationDocument.name,
+            organizationDocument.description,
+            organizationDocument.website,
+            organizationDocument.ownerId
+        );
+
+        organization.setId(organizationDocument._id.toString());
+
+        return organization;
     }
 }
 

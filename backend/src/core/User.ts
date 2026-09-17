@@ -1,13 +1,12 @@
 import UserRole from "./UserRole";
-import UserModel from "../Models/UserModel";
 import bcrypt from "bcrypt";
 
 class User {
     #id: string | undefined;
-    #name: string;
-    #email: string;
-    #password: string;
-    #role: UserRole;
+    #name: string = "";
+    #email: string = "";
+    #password: string = "";
+    #role: UserRole = UserRole.BASIC_USER;
 
     constructor(
         name: string,
@@ -16,26 +15,15 @@ class User {
         role: UserRole,
         isHashedPassword: boolean = false
     ) {
-        if (!name || name.trim().length === 0) {
-            throw new Error("User name is required.");
-        }
+        this.setName(name);
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setRole(role);
 
-        if (!email || email.trim().length === 0) {
-            throw new Error("User email is required.");
-        }
-
-        if (!password || password.length < 8) {
-            throw new Error("Password must contain at least 8 characters.");
-        }
-
-        this.#name = name.trim();
-        this.#email = email.trim().toLowerCase();
-
-        this.#password = isHashedPassword
-            ? password
-            : bcrypt.hashSync(password, 12);
-
-        this.#role = role;
+        if (!isHashedPassword) 
+            this.setPassword(password);
+        else 
+            this.#password = password
     }
 
     private setId(id: string): void {
@@ -46,16 +34,36 @@ class User {
         return this.#id;
     }
 
+    setName(name: string) {
+        if (!name || name.trim().length === 0) {
+            throw new Error("User name is required.");
+        }
+        
+        this.#name = name;
+    }
+
     getName(): string {
         return this.#name;
+    }
+
+    setEmail(email: string) {
+        this.#email = email;
     }
 
     getEmail(): string {
         return this.#email;
     }
 
+    setRole(role: UserRole) {
+        this.#role = role;
+    }
+
     getRole(): UserRole {
         return this.#role;
+    }
+
+    setPassword(password: string) {
+        this.#password = bcrypt.hashSync(password, 12);
     }
 
     getPassword(): string {

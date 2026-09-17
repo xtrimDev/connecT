@@ -95,8 +95,7 @@ class UserService {
             }
 
             const userDocument = await UserModel
-                .findOne({ email })
-                .select("+password");
+                .findOne({ email });
 
             if (!userDocument) {
                 throw new Error("User not found.");
