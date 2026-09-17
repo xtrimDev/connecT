@@ -53,6 +53,15 @@ class Skill {
 
         this.#skills = skills.map(skill => skill.trim());
     }
+
+    static fromDocument(doc: any): Skill {
+        const skill = new Skill(
+            doc.name,
+            doc.skills
+        );
+
+        return skill;
+    }
 }
 
 export default Skill;

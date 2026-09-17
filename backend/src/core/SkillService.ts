@@ -46,10 +46,7 @@ class SkillService {
             throw new Error("Skills not found for this user.");
         }
 
-        return new Skill(
-            user,
-            skillDocument.skills
-        );
+        return Skill.fromDocument(skillDocument);
     }
 }
 
