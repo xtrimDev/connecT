@@ -85,14 +85,14 @@ class OrganizationService {
         }
     }
 
-    static async getByName(email: string): Promise<Organization> {
+    static async getByName(name: string): Promise<Organization> {
         try {
-            if (!email) {
-                throw new Error("User email is required.");
+            if (!name) {
+                throw new Error("Organization name is required.");
             }
 
             const organizationDocument = await OrganizationModel
-                .findOne({ email })
+                .findOne({ name })
                 .select("+password");
 
             if (!organizationDocument) {

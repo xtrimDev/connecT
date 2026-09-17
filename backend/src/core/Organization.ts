@@ -1,5 +1,4 @@
 import User from "./User";
-import Workspace from "./Workspace"
 
 class Organization {
     #id : string | undefined;
