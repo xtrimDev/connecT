@@ -1,24 +1,29 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 import TaskStatus from "../core/TaskStatus";
 import TaskPriority from "../core/TaskPriority";
 
-const taskCommentSchema = new Schema(
-    {
-        userId: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true
-        },
-        content: {
-            type: String,
-            required: true,
-            trim: true
-        }
-    },
-    {
-        timestamps: true
-    }
-);
+export interface ITaskComment {
+    userId: mongoose.Types.ObjectId;
+    content: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface ITask extends Document {
+    teamId: mongoose.Types.ObjectId;
+    eventId?: mongoose.Types.ObjectId;
+    title: string;
+    description?: string;
+    status: TaskStatus;
+    priority: TaskPriority;
+    assignedTo?: mongoose.Types.ObjectId;
+    dueDate?: Date;
+    completedAt?: Date;
+    createdBy: mongoose.Types.ObjectId;
+    comments: ITaskComment[];
+    createdAt: Date;
+    updatedAt: Date;
+}
 
 const taskSchema = new Schema(
     {
@@ -80,19 +85,32 @@ const taskSchema = new Schema(
             required: true
         },
 
-        comments: [taskCommentSchema]
+        comments: [
+            {
+                userId: {
+                    type: Schema.Types.ObjectId,
+                    ref: "User",
+                    required: true
+                },
+                content: {
+                    type: String,
+                    required: true,
+                    trim: true
+                }
+            }
+        ]
     },
     {
         timestamps: true
     }
 );
 
-// Index for querying tasks by team and status
+// Indexes
 taskSchema.index({ teamId: 1, status: 1 });
 taskSchema.index({ assignedTo: 1 });
 taskSchema.index({ dueDate: 1 });
 
-// Middleware to set completedAt when status changes to COMPLETED
+// Middleware to auto-set completedAt
 taskSchema.pre('save', function(next) {
     if (this.isModified('status')) {
         if (this.status === TaskStatus.COMPLETED && !this.completedAt) {
@@ -104,6 +122,6 @@ taskSchema.pre('save', function(next) {
     next();
 });
 
-const TaskModel = mongoose.model("Task", taskSchema);
+const TaskModel = mongoose.model<ITask>("Task", taskSchema);
 
 export default TaskModel;

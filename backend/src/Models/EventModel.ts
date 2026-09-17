@@ -1,24 +1,29 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 import EventType from "../core/EventType";
 import EventResponseStatus from "../core/EventResponseStatus";
 
-const eventParticipantSchema = new Schema(
-    {
-        userId: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true
-        },
-        responseStatus: {
-            type: String,
-            enum: Object.values(EventResponseStatus),
-            default: EventResponseStatus.PENDING
-        }
-    },
-    {
-        timestamps: true
-    }
-);
+export interface IEventParticipant {
+    userId: mongoose.Types.ObjectId;
+    responseStatus: EventResponseStatus;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface IEvent extends Document {
+    teamId: mongoose.Types.ObjectId;
+    title: string;
+    description?: string;
+    eventType: EventType;
+    location?: string;
+    startTime: Date;
+    endTime?: Date;
+    isAllDay: boolean;
+    reminderMinutes?: number;
+    createdBy: mongoose.Types.ObjectId;
+    participants: IEventParticipant[];
+    createdAt: Date;
+    updatedAt: Date;
+}
 
 const eventSchema = new Schema(
     {
@@ -78,17 +83,30 @@ const eventSchema = new Schema(
             required: true
         },
 
-        participants: [eventParticipantSchema]
+        participants: [
+            {
+                userId: {
+                    type: Schema.Types.ObjectId,
+                    ref: "User",
+                    required: true
+                },
+                responseStatus: {
+                    type: String,
+                    enum: Object.values(EventResponseStatus),
+                    default: EventResponseStatus.PENDING
+                }
+            }
+        ]
     },
     {
         timestamps: true
     }
 );
 
-// Index for querying events by team and date
+// Indexes
 eventSchema.index({ teamId: 1, startTime: 1 });
 eventSchema.index({ startTime: 1, endTime: 1 });
 
-const EventModel = mongoose.model("Event", eventSchema);
+const EventModel = mongoose.model<IEvent>("Event", eventSchema);
 
 export default EventModel;
