@@ -13,7 +13,8 @@ class User {
         email: string,
         password: string,
         role: UserRole,
-        isHashedPassword: boolean = false
+        isHashedPassword: boolean = false,
+        skills: string[] = []
     ) {
         this.setName(name);
         this.setEmail(email);
@@ -80,7 +81,8 @@ class User {
             userDocument.email,
             userDocument.password,
             userDocument.role,
-            true
+            true,
+            userDocument.skills || []
         );
 
         user.setId(userDocument._id.toString());
