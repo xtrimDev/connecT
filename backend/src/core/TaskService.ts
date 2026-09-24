@@ -10,18 +10,18 @@ class TaskService {
     static async createTask(task: Task): Promise<string> {
         try {
             const newTask = await TaskModel.create({
-                teamId: task.getTeamId(),
-                eventId: task.getEventId(),
+                teamId: task.getTeamId() as any,
+                eventId: (task.getEventId() || undefined) as any,
                 title: task.getTitle(),
-                description: task.getDescription(),
+                description: task.getDescription() || undefined,
                 status: task.getStatus(),
                 priority: task.getPriority(),
-                assignedTo: task.getAssignedTo(),
-                dueDate: task.getDueDate(),
-                createdBy: task.getCreatedBy()
+                assignedTo: (task.getAssignedTo() || undefined) as any,
+                dueDate: task.getDueDate() || undefined,
+                createdBy: task.getCreatedBy() as any
             });
 
-            return newTask._id.toString();
+            return (newTask as any)._id.toString();
         } catch (e) {
             console.log("Error creating task: ", e);
             throw e;

@@ -10,7 +10,7 @@ class UserService {
                 name: user.getName(),
                 email: user.getEmail(),
                 password: user.getPassword(),
-                role: user.getRole(),
+                role: user.getRole()
             });
         } catch (e) {
             console.log("Error: ", e);

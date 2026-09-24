@@ -111,7 +111,7 @@ taskSchema.index({ assignedTo: 1 });
 taskSchema.index({ dueDate: 1 });
 
 // Middleware to auto-set completedAt
-taskSchema.pre('save', function(next) {
+taskSchema.pre('save', function() {
     if (this.isModified('status')) {
         if (this.status === TaskStatus.COMPLETED && !this.completedAt) {
             this.completedAt = new Date();
@@ -119,7 +119,6 @@ taskSchema.pre('save', function(next) {
             this.completedAt = null;
         }
     }
-    next();
 });
 
 const TaskModel = mongoose.model<ITask>("Task", taskSchema);

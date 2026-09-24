@@ -109,6 +109,66 @@ class ChannelService {
             throw e;
         }
     }
+
+    static async addGroupToChannel(channelId: string, groupId: string): Promise<Channel> {
+        try {
+            const updatedDoc = await ChannelModel.findByIdAndUpdate(
+                channelId,
+                { $addToSet: { groups: groupId } },
+                { new: true }
+            ).populate({
+                path: "groups",
+                populate: [
+                    { path: "users" },
+                    { path: "messages", populate: { path: "sender" } }
+                ]
+            });
+
+            if (!updatedDoc) {
+                throw new Error("Channel not found.");
+            }
+
+            return Channel.fromDocument(updatedDoc);
+        } catch (e) {
+            console.error("Error adding group to channel:", e);
+            throw e;
+        }
+    }
+
+    static async removeGroupFromChannel(channelId: string, groupId: string): Promise<Channel> {
+        try {
+            const updatedDoc = await ChannelModel.findByIdAndUpdate(
+                channelId,
+                { $pull: { groups: groupId } },
+                { new: true }
+            ).populate({
+                path: "groups",
+                populate: [
+                    { path: "users" },
+                    { path: "messages", populate: { path: "sender" } }
+                ]
+            });
+
+            if (!updatedDoc) {
+                throw new Error("Channel not found.");
+            }
+
+            return Channel.fromDocument(updatedDoc);
+        } catch (e) {
+            console.error("Error removing group from channel:", e);
+            throw e;
+        }
+    }
+
+    static async deleteChannelById(id: string): Promise<boolean> {
+        try {
+            const result = await ChannelModel.deleteOne({ _id: id });
+            return result.deletedCount > 0;
+        } catch (e) {
+            console.error("Error deleting channel:", e);
+            throw e;
+        }
+    }
 }
 
 export default ChannelService;

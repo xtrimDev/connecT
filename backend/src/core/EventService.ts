@@ -10,20 +10,20 @@ class EventService {
     static async createEvent(event: Event): Promise<string> {
         try {
             const newEvent = await EventModel.create({
-                teamId: event.getTeamId(),
+                teamId: event.getTeamId() as any,
                 title: event.getTitle(),
-                description: event.getDescription(),
-                eventType: event.getEventType(),
-                location: event.getLocation(),
-                startTime: event.getStartTime(),
-                endTime: event.getEndTime(),
+                description: event.getDescription() || undefined,
+                eventType: event.getEventType() || undefined,
+                location: event.getLocation() || undefined,
+                startTime: event.getStartTime() || undefined,
+                endTime: event.getEndTime() || undefined,
                 isAllDay: event.isAllDay(),
-                reminderMinutes: event.getReminderMinutes(),
-                createdBy: event.getCreatedBy(),
+                reminderMinutes: event.getReminderMinutes() || undefined,
+                createdBy: event.getCreatedBy() as any,
                 participants: []
             });
 
-            return newEvent._id.toString();
+            return (newEvent as any)._id.toString();
         } catch (e) {
             console.log("Error creating event: ", e);
             throw e;

@@ -1,5 +1,5 @@
 import Skill from "../core/Skill";
-import SkillModel from "../models/SkillModel";
+import SkillModel from "../Models/SkillModel";
 import User from "./User";
 
 class SkillService {

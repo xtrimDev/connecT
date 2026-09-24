@@ -101,6 +101,64 @@ class GroupService {
             throw e;
         }
     }
+
+    static async addUserToGroup(groupId: string, userId: string): Promise<Group> {
+        try {
+            const updatedDoc = await GroupModel.findByIdAndUpdate(
+                groupId,
+                { $addToSet: { users: userId } },
+                { new: true }
+            )
+                .populate("users")
+                .populate({
+                    path: "messages",
+                    populate: { path: "sender" }
+                });
+
+            if (!updatedDoc) {
+                throw new Error("Group not found.");
+            }
+
+            return Group.fromDocument(updatedDoc);
+        } catch (e) {
+            console.error("Error adding user to group:", e);
+            throw e;
+        }
+    }
+
+    static async removeUserFromGroup(groupId: string, userId: string): Promise<Group> {
+        try {
+            const updatedDoc = await GroupModel.findByIdAndUpdate(
+                groupId,
+                { $pull: { users: userId } },
+                { new: true }
+            )
+                .populate("users")
+                .populate({
+                    path: "messages",
+                    populate: { path: "sender" }
+                });
+
+            if (!updatedDoc) {
+                throw new Error("Group not found.");
+            }
+
+            return Group.fromDocument(updatedDoc);
+        } catch (e) {
+            console.error("Error removing user from group:", e);
+            throw e;
+        }
+    }
+
+    static async deleteGroupById(id: string): Promise<boolean> {
+        try {
+            const result = await GroupModel.deleteOne({ _id: id });
+            return result.deletedCount > 0;
+        } catch (e) {
+            console.error("Error deleting group:", e);
+            throw e;
+        }
+    }
 }
 
 export default GroupService;

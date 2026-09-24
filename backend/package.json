@@ -21,13 +21,16 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "mongoose": "^9.10.0",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
-    "@types/node": "^26.5.1",
-    "tsx": "^4.23.13",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.2",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }
 }

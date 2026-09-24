@@ -22,6 +22,8 @@ const messageSchema = new Schema(
     }
 );
 
+messageSchema.index({ group: 1, createdAt: -1 });
+
 const MessageModel = mongoose.model("Message", messageSchema);
 
 export default MessageModel;
